@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>发票凑数</title>
+    <script type="text/javascript">
+        var l = [];
+        var index = 0;
+        function getFapiao(fapiaos,target){
+            var visited = [];
+            for(i=0;i<fapiaos.length;i++){
+                visited[i]=false;
+            }
+            getSubSet(visited,fapiaos,target,0);
+        }
+
+        function getSubSet(visited,fapiaos,target,step){
+
+            if (step == fapiaos.length) {
+                var temp =getSum(visited, fapiaos);
+                if ((temp<=(Number(target)+10))&& temp>=Number(target)) {
+                    var i= 0;
+                    l[index]=" SUM:"+temp+",detail:";index++;
+                    for (; i<fapiaos.length; i++) {
+                        if(visited[i]) {l[index]=fapiaos[i];index++;};
+                    }
+                    l[index]="||||";
+                    index++;
+                }
+                return l;
+            }
+            visited[step] = true;
+            getSubSet(visited, fapiaos, target, step + 1);
+            visited[step] = false;
+            getSubSet(visited, fapiaos, target, step + 1);
+        }
+        function getSum(visited,fapiaos) {
+            var sum = 0;
+            var i= 0;
+            for (; i<fapiaos.length; i++) {
+                if (visited[i])
+                    sum = Number(fapiaos[i])+Number(sum);
+            }
+            return sum;
+        }
+
+        document.addEventListener("readystatechange", function (e) {
+            if (this.readyState === "complete") {
+                var cbe = document.getElementById("computeButton");
+                var fapiaos = document.getElementById("fapiaos");
+
+                var target = document.getElementById("target");
+
+                var resultDivElement = document.getElementById("resultDiv");
+                cbe.addEventListener("click", (e) => {
+                    l=[];
+                    index=0;
+                    var p1 = fapiaos.value;
+                    var p2 = target.value;
+
+                var code = getFapiao(p1.replace(" ","").split(","),p2);
+                // while (code.indexOf("\r\n") > -1)
+                //     code = code.replace("\r\n", "l<br/>");
+                resultDivElement.innerHTML = l;
+            });
+            }
+        });
+    </script>
+</head>
+<body>
+<div>
+    <h2>发票</h2>
+</div>
+<div>
+    <div style="margin-top:10px;padding-top:0px">
+        <label for="fapiaos">发票，逗号分隔</label>
+        <input id="fapiaos" type="text" value="200,376,169,171,176,88.5,82.5,68,125"/>
+    </div>
+    <div>
+        <label for="target">目标 </label>
+        <input id="target" type="number" value="500"/>
+    </div>
+    <div>
+        <input id="computeButton" type="button" value="开始凑票"/>
+    </div>
+</div>
+<div id="resultDiv" style="font-family:Consolas,'Lucida Console',monospace;margin-top:20px;padding:1em;border:dashed;border-width:medium;border-collapse:collapse">
+
+</div>
+</body>
+</html>
